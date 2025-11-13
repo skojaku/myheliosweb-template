@@ -601,12 +601,26 @@
         }
 
         // Decompress gzip with pako
+        console.log('Original arrayBuffer size:', arrayBuffer.byteLength);
         const decompressed = pako.inflate(new Uint8Array(arrayBuffer));
+        console.log('Decompressed size:', decompressed.byteLength);
 
         // Extract tar archive with js-untar
         // Ensure we pass a properly aligned ArrayBuffer by creating a copy
         const tarBuffer = decompressed.buffer.slice(decompressed.byteOffset, decompressed.byteOffset + decompressed.byteLength);
-        const files = await untar(tarBuffer);
+        console.log('tarBuffer is ArrayBuffer:', tarBuffer instanceof ArrayBuffer);
+        console.log('tarBuffer size:', tarBuffer.byteLength);
+
+        let files;
+        try {
+          files = await untar(tarBuffer);
+        } catch (untarError) {
+          console.error('Untar specific error:', untarError);
+          console.error('Error name:', untarError.name);
+          console.error('Error message:', untarError.message);
+          console.error('Error stack:', untarError.stack);
+          throw untarError;
+        }
 
         console.log(`Found ${files.length} files in archive:`, files.map(f => f.name));
 
