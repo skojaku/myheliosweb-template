@@ -577,7 +577,6 @@
 
   <!-- Libraries for tar.gz support -->
   <script src="https://cdn.jsdelivr.net/npm/pako@2/dist/pako.min.js"></script>
-  <script src="https://unpkg.com/js-untar@2.0.0/build/dist/untar.js"></script>
 
   <!-- Network file handler with tar.gz support -->
   <script>
@@ -587,17 +586,56 @@
     // Store extracted tar.gz content
     const tarGzCache = new Map();
 
+    // Simple TAR parser (USTAR format)
+    function parseTar(buffer) {
+      const files = [];
+      const view = new Uint8Array(buffer);
+      let offset = 0;
+
+      while (offset < view.length - 512) {
+        // Read file name (first 100 bytes)
+        const nameBytes = view.slice(offset, offset + 100);
+        const nameEnd = nameBytes.indexOf(0);
+        if (nameEnd === -1 || nameEnd === 0) break;
+
+        const name = new TextDecoder('utf-8').decode(nameBytes.slice(0, nameEnd));
+
+        // Read file size (124-135, octal)
+        const sizeBytes = view.slice(offset + 124, offset + 136);
+        const sizeStr = new TextDecoder('utf-8').decode(sizeBytes).trim().replace(/\0/g, '');
+        const size = parseInt(sizeStr, 8) || 0;
+
+        // Read file type (156)
+        const typeFlag = String.fromCharCode(view[offset + 156]);
+
+        // Skip to data (512 bytes for header)
+        offset += 512;
+
+        // Extract file data if it's a regular file
+        if (typeFlag === '0' || typeFlag === '\0') {
+          const fileData = view.slice(offset, offset + size);
+          files.push({
+            name: name,
+            size: size,
+            buffer: fileData.buffer.slice(fileData.byteOffset, fileData.byteOffset + fileData.byteLength)
+          });
+        }
+
+        // Move to next file (data is padded to 512-byte boundary)
+        offset += Math.ceil(size / 512) * 512;
+      }
+
+      return files;
+    }
+
     // Function to extract tar.gz files
     async function extractTarGz(arrayBuffer, sourceUrl) {
       console.log('Extracting tar.gz file from:', sourceUrl);
 
       try {
-        // Check if libraries are loaded
+        // Check if pako is loaded
         if (typeof pako === 'undefined') {
           throw new Error('pako library not loaded');
-        }
-        if (typeof untar === 'undefined') {
-          throw new Error('untar library not loaded');
         }
 
         // Decompress gzip with pako
@@ -605,22 +643,9 @@
         const decompressed = pako.inflate(new Uint8Array(arrayBuffer));
         console.log('Decompressed size:', decompressed.byteLength);
 
-        // Extract tar archive with js-untar
-        // Ensure we pass a properly aligned ArrayBuffer by creating a copy
+        // Extract tar archive with custom parser
         const tarBuffer = decompressed.buffer.slice(decompressed.byteOffset, decompressed.byteOffset + decompressed.byteLength);
-        console.log('tarBuffer is ArrayBuffer:', tarBuffer instanceof ArrayBuffer);
-        console.log('tarBuffer size:', tarBuffer.byteLength);
-
-        let files;
-        try {
-          files = await untar(tarBuffer);
-        } catch (untarError) {
-          console.error('Untar specific error:', untarError);
-          console.error('Error name:', untarError.name);
-          console.error('Error message:', untarError.message);
-          console.error('Error stack:', untarError.stack);
-          throw untarError;
-        }
+        const files = parseTar(tarBuffer);
 
         console.log(`Found ${files.length} files in archive:`, files.map(f => f.name));
 
