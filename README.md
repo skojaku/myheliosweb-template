@@ -65,6 +65,48 @@ xn.igraph2xnet(g, "output_network.xnet")
 > The **Label** is a special attribute that can be used for searching nodes in the visualization. 
 > - Categorical attributes (e.g., `type`, `country` etc; names are arbitrary) will be recognized as attribute for coloring
 > - Numerical attributes (e.g., `degree`) will be recognized as attribute for sizing nodes.
+> - 
+### Compressing the .xnet file
+
+You can compress the .xnet file to create `.xnet.tar.gz` files. This is useful if the network is too large to host in github.
+
+```python
+import tarfile
+import gzip
+import os
+
+def create_xnet_tarball(xnet_file, output_file=None):
+    """
+    Create a .xnet.tar.gz file from an .xnet file.
+
+    Args:
+        xnet_file: Path to the .xnet file
+        output_file: Output path (optional, defaults to input_name.xnet.tar.gz)
+    """
+    if output_file is None:
+        output_file = xnet_file + ".tar.gz"
+
+    # Create tar.gz file
+    with tarfile.open(output_file, "w:gz") as tar:
+        tar.add(xnet_file, arcname=os.path.basename(xnet_file))
+
+    print(f"Created {output_file}")
+    return output_file
+
+# Example usage
+create_xnet_tarball("networks/my-network.xnet")
+# Creates: networks/my-network.xnet.tar.gz
+```
+
+Or simply use the command line:
+
+```bash
+# Create a compressed network file
+tar -czf networks/my-network.xnet.tar.gz -C networks my-network.xnet
+
+# Verify the contents
+tar -tzf networks/my-network.xnet.tar.gz
+```
 
 ## URL Parameters
 
@@ -75,7 +117,7 @@ Load specific networks by adding URL parameters:
 To load a network file from the `networks/` folder:
 
 ```
-index.html?network=scientific-mobility
+index.html?network=scientific-mobility.xnet
 ```
 
 ### Loading Compressed Network Files (.xnet.tar.gz) - NEW!
@@ -90,12 +132,6 @@ index.html?network=my-network.xnet.tar.gz
 - The `.xnet.tar.gz` file is automatically decompressed in the browser
 - The first `.xnet` file found in the archive is loaded
 - The extracted content is cached for faster subsequent loads
-
-**Creating a compressed network file:**
-```bash
-# Create a .xnet.tar.gz file containing your .xnet network
-tar -czf my-network.xnet.tar.gz my-network.xnet
-```
 
 **Important:** Save the compressed file with the `.xnet.tar.gz` extension (not just `.tar.gz`). Place it in the `networks/` folder alongside your regular `.xnet` files.
 
@@ -180,47 +216,6 @@ python -m SimpleHTTPServer 8000
 
 Place your network files under the `networks/` folder and access them via URL parameters as described above.
 
-### Creating Compressed Network Files with Python
-
-You can create `.xnet.tar.gz` files programmatically using Python:
-
-```python
-import tarfile
-import gzip
-import os
-
-def create_xnet_tarball(xnet_file, output_file=None):
-    """
-    Create a .xnet.tar.gz file from an .xnet file.
-
-    Args:
-        xnet_file: Path to the .xnet file
-        output_file: Output path (optional, defaults to input_name.xnet.tar.gz)
-    """
-    if output_file is None:
-        output_file = xnet_file + ".tar.gz"
-
-    # Create tar.gz file
-    with tarfile.open(output_file, "w:gz") as tar:
-        tar.add(xnet_file, arcname=os.path.basename(xnet_file))
-
-    print(f"Created {output_file}")
-    return output_file
-
-# Example usage
-create_xnet_tarball("networks/my-network.xnet")
-# Creates: networks/my-network.xnet.tar.gz
-```
-
-Or simply use the command line:
-
-```bash
-# Create a compressed network file
-tar -czf networks/my-network.xnet.tar.gz -C networks my-network.xnet
-
-# Verify the contents
-tar -tzf networks/my-network.xnet.tar.gz
-```
 
 ## Project Structure
 
