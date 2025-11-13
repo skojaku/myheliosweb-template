@@ -604,7 +604,9 @@
         const decompressed = pako.inflate(new Uint8Array(arrayBuffer));
 
         // Extract tar archive with js-untar
-        const files = await untar(decompressed.buffer);
+        // Ensure we pass a properly aligned ArrayBuffer by creating a copy
+        const tarBuffer = decompressed.buffer.slice(decompressed.byteOffset, decompressed.byteOffset + decompressed.byteLength);
+        const files = await untar(tarBuffer);
 
         console.log(`Found ${files.length} files in archive:`, files.map(f => f.name));
 
