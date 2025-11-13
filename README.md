@@ -166,14 +166,61 @@ index.html?network=scientific-mobility&dark&size=0.5
 Download the repository and run a local web server to visualize your networks:
 
 ```bash
-# Start a local web server
-python -m http.server 8000
+# Start a local web server (Python 3)
+python3 -m http.server 8000
 
-# Open in browser
-# Navigate to: http://localhost:8000
+# Or if you have Python 2
+python -m SimpleHTTPServer 8000
+
+# Open in browser and navigate to:
+# http://localhost:8000
+# or
+# http://localhost:8000/?network=scientific-mobility.xnet.tar.gz
 ```
 
-Place your network dat under networks folder and access it via URL parameters as described above.
+Place your network files under the `networks/` folder and access them via URL parameters as described above.
+
+### Creating Compressed Network Files with Python
+
+You can create `.xnet.tar.gz` files programmatically using Python:
+
+```python
+import tarfile
+import gzip
+import os
+
+def create_xnet_tarball(xnet_file, output_file=None):
+    """
+    Create a .xnet.tar.gz file from an .xnet file.
+
+    Args:
+        xnet_file: Path to the .xnet file
+        output_file: Output path (optional, defaults to input_name.xnet.tar.gz)
+    """
+    if output_file is None:
+        output_file = xnet_file + ".tar.gz"
+
+    # Create tar.gz file
+    with tarfile.open(output_file, "w:gz") as tar:
+        tar.add(xnet_file, arcname=os.path.basename(xnet_file))
+
+    print(f"Created {output_file}")
+    return output_file
+
+# Example usage
+create_xnet_tarball("networks/my-network.xnet")
+# Creates: networks/my-network.xnet.tar.gz
+```
+
+Or simply use the command line:
+
+```bash
+# Create a compressed network file
+tar -czf networks/my-network.xnet.tar.gz -C networks my-network.xnet
+
+# Verify the contents
+tar -tzf networks/my-network.xnet.tar.gz
+```
 
 ## Project Structure
 
