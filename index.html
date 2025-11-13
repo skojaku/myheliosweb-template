@@ -6,6 +6,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Permissions-Policy" content="interest-cohort=(), geolocation=(), camera=(), microphone=()">
   <style>
     *,
     *::before,
@@ -660,10 +661,12 @@
       // Handle .tar.gz files (app automatically appends .xnet extension)
       if (typeof url === 'string' && url.includes('.tar.gz')) {
         // Strip .xnet suffix if present (e.g., file.tar.gz.xnet -> file.tar.gz)
-        const actualUrl = url.replace('.tar.gz.xnet', '.tar.gz');
+        // Also handle .xnet.tar.gz pattern (e.g., file.xnet.tar.gz -> file.tar.gz)
+        let actualUrl = url.replace('.tar.gz.xnet', '.tar.gz');
+        actualUrl = actualUrl.replace('.xnet.tar.gz', '.tar.gz');
 
         if (actualUrl !== url) {
-          console.log('Detected tar.gz.xnet request:', url);
+          console.log('Detected malformed tar.gz request:', url);
           console.log('Correcting to:', actualUrl);
         } else {
           console.log('Detected tar.gz request:', url);
