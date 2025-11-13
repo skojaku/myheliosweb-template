@@ -4,7 +4,7 @@
 
 The goal of this repository is to make it easier to deploy *public* interactive visualizations on GitHub Page. I hope this repository servers as an entry point for this great visualization tool. If you like the tool, please give a star ⭐ to [the HeliosWeb repository here](https://github.com/filipinascimento/helios-web).
 
-**Demo**: [Demonstration](https://skojaku.github.io/myheliosweb-template/?network=scientific-mobility&advanced&dark&density&size=0.5&layout=0&use3d&colorProperty=country&additive&shad). This visualizaiton stems from [Unsupervised embedding of trajectories captures the latent structure of scientific migration](https://www.pnas.org/doi/10.1073/pnas.2305414120)  by Dakota Murray, Jisung Yoon, Sadamori Kojaku, Rodrigo Costas, Woo-Sung Jung, Staša Milojević, and Yong-Yeol Ahn.
+**Demo**: [Demonstration](https://skojaku.github.io/myheliosweb-template/?network=scientific-mobility.xnet&advanced&dark&density&size=0.5&layout=0&use3d&colorProperty=country&additive&shad). This visualizaiton stems from [Unsupervised embedding of trajectories captures the latent structure of scientific migration](https://www.pnas.org/doi/10.1073/pnas.2305414120)  by Dakota Murray, Jisung Yoon, Sadamori Kojaku, Rodrigo Costas, Woo-Sung Jung, Staša Milojević, and Yong-Yeol Ahn.
 
 
 ## Creating Your Own *Public* Visualization🔨!
