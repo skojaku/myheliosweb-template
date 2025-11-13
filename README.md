@@ -78,24 +78,26 @@ To load a network file from the `networks/` folder:
 index.html?network=scientific-mobility
 ```
 
-### Loading Compressed Network Files (.tar.gz) - NEW!
+### Loading Compressed Network Files (.xnet.tar.gz) - NEW!
 
-You can also load compressed `.tar.gz` files containing `.xnet` networks. This is useful for reducing file size and bandwidth usage:
+You can also load compressed `.xnet.tar.gz` files containing `.xnet` networks. This is useful for reducing file size and bandwidth usage:
 
 ```
-index.html?network=networks/my-network.tar.gz
+index.html?network=my-network.xnet.tar.gz
 ```
 
 **How it works:**
-- The `.tar.gz` file is automatically decompressed in the browser
+- The `.xnet.tar.gz` file is automatically decompressed in the browser
 - The first `.xnet` file found in the archive is loaded
 - The extracted content is cached for faster subsequent loads
 
 **Creating a compressed network file:**
 ```bash
-# Create a tar.gz file containing your .xnet network
-tar -czf my-network.tar.gz my-network.xnet
+# Create a .xnet.tar.gz file containing your .xnet network
+tar -czf my-network.xnet.tar.gz my-network.xnet
 ```
+
+**Important:** Save the compressed file with the `.xnet.tar.gz` extension (not just `.tar.gz`). Place it in the `networks/` folder alongside your regular `.xnet` files.
 
 This can significantly reduce download times for large networks!
 
@@ -180,8 +182,9 @@ Place your network dat under networks folder and access it via URL parameters as
 ├── index.html              # Main HTML file with embedded styles
 ├── scripts/
 │   └── main-c9742021.js   # Bundled application JavaScript
-└── networks/               # Network data files (.xnet format)
+└── networks/               # Network data files (.xnet or .xnet.tar.gz format)
     ├── scientific-mobility.xnet
+    ├── scientific-mobility.xnet.tar.gz  # Compressed version
     └── ...
 ```
 
