@@ -660,10 +660,11 @@
 
       // Handle .tar.gz files (app automatically appends .xnet extension)
       if (typeof url === 'string' && url.includes('.tar.gz')) {
-        // Strip .xnet suffix if present (e.g., file.tar.gz.xnet -> file.tar.gz)
-        // Also handle .xnet.tar.gz pattern (e.g., file.xnet.tar.gz -> file.tar.gz)
-        let actualUrl = url.replace('.tar.gz.xnet', '.tar.gz');
-        actualUrl = actualUrl.replace('.xnet.tar.gz', '.tar.gz');
+        // Strip trailing .xnet suffix if present (e.g., file.xnet.tar.gz.xnet -> file.xnet.tar.gz)
+        let actualUrl = url;
+        if (actualUrl.endsWith('.xnet')) {
+          actualUrl = actualUrl.slice(0, -5);  // Remove trailing '.xnet'
+        }
 
         if (actualUrl !== url) {
           console.log('Detected malformed tar.gz request:', url);
